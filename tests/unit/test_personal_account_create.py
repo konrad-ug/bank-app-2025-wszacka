@@ -20,14 +20,17 @@ class TestPersonalAccount:
         assert p_account.pesel == "Invalid"
 
     def test_promo_code_valid(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901","PROM_123")
+        p_account = PersonalAccount("John", "Doe", "06215678901","PROM_123")
         assert p_account.balance == 50.0
     def test_promo_code_too_long(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901","PROM_XYZZ")
+        p_account = PersonalAccount("John", "Doe", "06215678901","PROM_XYZZ")
         assert p_account.balance == 0.0
     def test_promo_code_too_short(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901","PROM_XY")
+        p_account = PersonalAccount("John", "Doe", "06215678901","PROM_XY")
         assert p_account.balance == 0.0
     def test_promo_code_invalid(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901","PROX_456")
+        p_account = PersonalAccount("John", "Doe", "06215678901","PROX_456")
+        assert p_account.balance == 0.0
+    def test_promo_code_too_old(self):
+        p_account = PersonalAccount("John", "Doe", "55115678901","PROM_XYZ")
         assert p_account.balance == 0.0
