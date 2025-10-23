@@ -7,10 +7,7 @@ class PersonalAccount(Account):
         self.pesel = pesel if self.is_pesel_valid(pesel) else "Invalid"
         self.balance = 50.0 if self.is_promo_code_valid(promo_code) else 0.0
 
-    def outgoing_express_transfer(self,value):
-        if value > 0 and value <= self.balance:
-            self.balance -= value + self.express_transfer_fee
-        return self.balance
+    
 
     def is_pesel_valid(self,pesel):
         if isinstance(pesel, str) and len(pesel) == 11:
