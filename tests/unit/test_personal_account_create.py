@@ -34,3 +34,18 @@ class TestPersonalAccount:
     def test_promo_code_too_old(self):
         p_account = PersonalAccount("John", "Doe", "55115678901","PROM_XYZ")
         assert p_account.balance == 0.0
+
+    def test_history_transfer_incoming(self):
+        p_account = PersonalAccount("John", "Doe", "12345678901")
+        p_account.incoming_transfer(200.00)
+        assert p_account.history == [200.00]
+    def test_history_transfer_outcoming(self):
+        p_account = PersonalAccount("John", "Doe", "12345678901")
+        p_account.balance = 300.00
+        p_account.outgoing_transfer(300.00)
+        assert p_account.history == [-300.00]
+    def test_history_transfer_express(self):
+        p_account = PersonalAccount("John", "Doe", "12345678901")
+        p_account.balance = 300.00
+        p_account.outgoing_express_transfer(270.00)
+        assert p_account.history == [-270.00, -1]
