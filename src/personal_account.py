@@ -32,6 +32,22 @@ class PersonalAccount(Account):
                 year += 1900
             return year > 1960
         return False
-
     
+    def submit_for_loan(self,value):
+        if 3 <= len(self.history) < 5:
+            for i in self.history:
+                if i <= 0:
+                    return False
+            self.balance += value
+            return True
+        elif len(self.history) >= 5:
+            sum = 0
+            for i in self.history:
+                sum +=i
+            if sum > value:
+                self.balance += value
+                return True
+            else:
+                return False
+        return False
 
