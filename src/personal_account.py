@@ -34,7 +34,7 @@ class PersonalAccount(Account):
         return False
     
     def submit_for_loan(self,value):
-        if 3 <=len(self.history) < 5:
+        if 3 <= len(self.history) < 5:
             for i in self.history:
                 if i <= 0:
                     return False
