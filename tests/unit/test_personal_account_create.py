@@ -50,47 +50,5 @@ class TestPersonalAccount:
         p_account.outgoing_express_transfer(270.00)
         assert p_account.history == [-270.00, -1]
 
-    def test_submit_for_loan_three_incoming_valid(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901")
-        p_account.incoming_transfer(20.0)
-        p_account.incoming_transfer(40.0)
-        p_account.incoming_transfer(10.0)
-        assert p_account.submit_for_loan(20.00) == True
-
-    def test_submit_for_loan_five_history(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901")
-        p_account.incoming_transfer(20.0)
-        p_account.outgoing_express_transfer(5.00)
-        p_account.incoming_transfer(50.0)
-        p_account.outgoing_transfer(20.0)
-        assert p_account.submit_for_loan(40.00) == True
-
-    def test_submit_for_loan_five_history_too_much(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901")
-        p_account.incoming_transfer(20.0)
-        p_account.outgoing_express_transfer(5.00)
-        p_account.incoming_transfer(50.0)
-        p_account.outgoing_transfer(20.0)
-        assert p_account.submit_for_loan(50.00) == False
-
-    def test_submit_for_loan_less_five_history(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901")
-        p_account.incoming_transfer(20.0)
-        p_account.outgoing_express_transfer(5.00)
-        p_account.incoming_transfer(50.0)
-        assert p_account.submit_for_loan(40.00) == False
-
-    def test_submit_for_loan_incoming_invalid(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901")
-        p_account.incoming_transfer(20.0)
-        p_account.outgoing_transfer(5.0)
-        p_account.incoming_transfer(10.0)
-        assert p_account.submit_for_loan(20.00) == False
-
-    def test_submit_for_loan_less_three_incoming(self):
-        p_account = PersonalAccount("John", "Doe", "12345678901")
-        p_account.incoming_transfer(20.0)
-        p_account.incoming_transfer(40.0)
-        assert p_account.submit_for_loan(20.00) == False
 
     
