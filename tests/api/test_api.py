@@ -15,7 +15,7 @@ class TestApi:
         yield
         accounts = requests.get(self.url).json()
         for acc in accounts:
-            delete_response = requests.delete(f"{self.url}/{acc["pesel"]}")
+            delete_response = requests.delete(f"{self.url}/{acc['pesel']}")
             assert delete_response.status_code == 200
 
 
