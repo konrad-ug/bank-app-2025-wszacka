@@ -37,6 +37,7 @@ jobs:
     - name: Start Flask API
       run: |
        python3 -m flask --app app/api.py run
+       sleep 5
     - name: Test with pytest
       run: |
         python3 -m coverage run --source=src -m pytest tests/unit tests/api
