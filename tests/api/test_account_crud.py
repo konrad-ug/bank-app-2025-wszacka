@@ -17,10 +17,16 @@ class TestApi:
             assert delete_response.status_code == 200
 
     def test_create_account(self):
-        payload = {"name": "james", "surname": "hetfield", "pesel": "89092909825"}
+        payload = {"name": "jola", "surname": "nowak", "pesel": "12345678901"}
         response = requests.post(self.url, json=payload)
         assert response.status_code == 201
         assert response.json()["message"] == "Account created"
+
+    def test_create_account_same_pesel(self):
+        payload = {"name": "karol", "surname": "mucha", "pesel": "89092909825"}
+        response = requests.post(self.url, json=payload)
+        assert response.status_code == 409
+        assert response.json()["message"] == "Account with this pesel already exists"
 
     def test_get_account_count(self):
         response = requests.get(f"{self.url}/count")
@@ -41,16 +47,13 @@ class TestApi:
 
     def test_get_account_by_pesel(self):
         response = requests.get(f"{self.url}/89092909825")
-        response = requests.get(self.url)
         assert response.status_code == 200
-        assert response.json() == [
-            {
-                "name": "james",
-                "surname": "hetfield",
-                "pesel": "89092909825",
-                "balance": 0.0,
-            }
-        ]
+        assert response.json() == {
+            "name": "james",
+            "surname": "hetfield",
+            "pesel": "89092909825",
+            "balance": 0.0,
+        }
 
     def test_wrong_get_account_by_pesel(self):
         response = requests.get(f"{self.url}/123456788901")
