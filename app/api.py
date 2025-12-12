@@ -95,6 +95,9 @@ def transfer(pesel):
     if acc is None:
         return jsonify({"error": "Can't find this account!"}), 404
 
+    if value <= 0:
+        return jsonify({"error": "Negative can't be value for transaction"}), 422
+
     if data["type"] == "incoming":
         acc.incoming_transfer(value)
     elif data["type"] == "outgoing":
