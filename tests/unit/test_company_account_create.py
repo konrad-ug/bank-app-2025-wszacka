@@ -15,6 +15,12 @@ class TestCompanyAccount:
         assert c_account.balance == 0.0
         assert c_account.nip == "8461627563"
 
+    def test_CompanyAccount_creation_false(self, mocker: MockFixture):
+        mock = mocker.patch("requests.get")
+        mock.return_value.status_code = 300
+        c_account = CompanyAccount("Nazwa", "8461627563")
+        assert c_account.nip == "Invalid"
+
     def test_nip_too_long(self):
         c_account = CompanyAccount("Nazwa", "1234567890123")
         c_account.nip = "Invalid"
