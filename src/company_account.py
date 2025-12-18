@@ -10,6 +10,7 @@ load_dotenv()
 class CompanyAccount(Account):
     def __init__(self, name, nip):
         super().__init__()
+        self.email_history_text_email = "Company Account History: "
         self.name = name
         self.nip = nip if self.is_nip_valid(nip) else "Invalid"
         self.express_transfer_fee = 5
