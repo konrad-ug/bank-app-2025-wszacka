@@ -11,7 +11,7 @@ class TestPerf:
             response = requests.post(self.url, json=self.account_details, timeout=0.5)
             assert response.status_code == 201
             assert response.json()["message"] == "Account created"
-            response = requests.delete(f"{self.url}/{self.account_details["pesel"]}")
+            response = requests.delete(f"{self.url}/{self.account_details['pesel']}")
             assert response.status_code == 200
             assert response.json()["message"] == "Account deleted"
 
@@ -22,16 +22,16 @@ class TestPerf:
         for _ in range(100):
             payload = {"amount": 5, "type": "incoming"}
             response = requests.post(
-                f"{self.url}/{self.account_details["pesel"]}/transfer",
+                f"{self.url}/{self.account_details['pesel']}/transfer",
                 json=payload,
                 timeout=5,
             )
-        request_data = requests.get(f"{self.url}/{self.account_details["pesel"]}")
+        request_data = requests.get(f"{self.url}/{self.account_details['pesel']}")
         curr_balance = request_data.json()["balance"]
         assert curr_balance == 500
         assert response.status_code == 200
         assert response.json()["message"] == "The order is accepted for realization"
-        response = requests.delete(f"{self.url}/{self.account_details["pesel"]}")
+        response = requests.delete(f"{self.url}/{self.account_details['pesel']}")
 
     # def test_create_1000_then_del(self):
     #     pesel_list = []
