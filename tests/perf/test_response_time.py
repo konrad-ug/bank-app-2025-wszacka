@@ -1,49 +1,56 @@
 import requests
-import random
+import pytest
 
 
 class TestPerf:
     url = "http://127.0.0.1:5000/api/accounts"
     account_details = {"name": "james", "surname": "hetfield", "pesel": "89092909825"}
+    iteration_count = 100
+    timeout = 0.5
 
-    def test_create_del_100(self):
-        for _ in range(100):
-            response = requests.post(self.url, json=self.account_details, timeout=0.5)
-            assert response.status_code == 201
-            assert response.json()["message"] == "Account created"
-            response = requests.delete(f"{self.url}/{self.account_details['pesel']}")
-            assert response.status_code == 200
-            assert response.json()["message"] == "Account deleted"
+    @pytest.fixture(autouse=True, scope="function")
+    def clear(self):
+        response = requests.get(self.url, timeout=self.timeout)
+        accounts = response.json()
+        for account in accounts:
+            pesel = account["pesel"]
+            requests.delete(f"{self.url}/{pesel}", timeout=self.timeout)
 
-    def test_create_transfer_100(self):
-        response = requests.post(self.url, json=self.account_details, timeout=0.5)
-        assert response.status_code == 201
-        assert response.json()["message"] == "Account created"
-        for _ in range(100):
-            payload = {"amount": 5, "type": "incoming"}
-            response = requests.post(
+    def test_create_del_perf(self):
+        for _ in range(self.iteration_count):
+            create_response = requests.post(
+                self.url, json=self.account_details, timeout=0.5
+            )
+            assert create_response.status_code == 201
+            del_response = requests.delete(
+                f"{self.url}/{self.account_details['pesel']}"
+            )
+            assert del_response.status_code == 200
+
+    def test_create_del_perf_group(self):
+        pesels = [f"12345678{i:03d}" for i in range(1000)]
+        for pesel in pesels:
+            body = {**self.account_details, "pesel": pesel}
+            create_res = requests.post(self.url, json=body, timeout=self.timeout)
+            assert create_res.status_code == 201
+        for pesel in pesels:
+            del_res = requests.delete(f"{self.url}/{pesel}", timeout=self.timeout)
+            assert del_res.status_code == 200
+
+    def test_transfer_perf(self):
+        create_response = requests.post(
+            self.url, json=self.account_details, timeout=self.timeout
+        )
+        assert create_response.status_code == 201
+        for _ in range(self.iteration_count):
+            transfer_response = requests.post(
                 f"{self.url}/{self.account_details['pesel']}/transfer",
-                json=payload,
+                json={"type": "incoming", "amount": 100},
                 timeout=5,
             )
-        request_data = requests.get(f"{self.url}/{self.account_details['pesel']}")
-        curr_balance = request_data.json()["balance"]
-        assert curr_balance == 500
-        assert response.status_code == 200
-        assert response.json()["message"] == "The order is accepted for realization"
-        response = requests.delete(f"{self.url}/{self.account_details['pesel']}")
-
-    # def test_create_1000_then_del(self):
-    #     pesel_list = []
-    #     for _ in range(10):
-    #         pesel = random.randint(10000000000, 99999999999)
-    #         acc = {"name": "jola", "surname": "polska", "pesel": pesel}
-    #         response = requests.post(self.url, json=acc, timeout=5)
-    #         pesel_list.append(pesel)
-    #         assert response.status_code == 201
-    #         assert response.json()["message"] == "Account created"
-    #     for i in range(10):
-    #         response = requests.delete(f"{self.url}/{pesel_list[i]}", timeout=5)
-    #         assert pesel_list == 10
-    #         assert response.status_code == 200
-    #         assert response.json()["message"] == "Account deleted"
+        account = requests.get(
+            f"{self.url}/{self.account_details['pesel']}", timeout=self.timeout
+        )
+        assert account.json()["balance"] == 100 * self.iteration_count
+        del_response = requests.delete(f"{self.url}/{self.account_details['pesel']}")
+        assert del_response.status_code == 200
