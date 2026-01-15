@@ -1,0 +1,1 @@
+#przychodzące i wychodzące wystarczą
