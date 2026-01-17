@@ -63,4 +63,25 @@ def field_equals_to(context, pesel, field, value):
         )
     response = requests.get(URL + f"/api/accounts/{pesel}")
     data = response.json()
-    assert f"{data[field]}" == value
+    assert f"{data[field]}" == f"{value}"
+
+
+# TRANSFERS-------------------------
+@step('Account with pesel "{pesel}" has "{field}" equal to "{value}"')
+def field_equals_to(context, pesel, field, value):
+    if field not in ["name", "surname", "balance"]:
+        raise ValueError(
+            f"Invalid field: {field}. Must be 'name', 'surname' or 'balance'."
+        )
+    response = requests.get(URL + f"/api/accounts/{pesel}")
+    data = response.json()
+    assert f"{data[field]}" == f"{value}"
+
+
+@step(
+    'User with pesel "{pesel}" makes "{transfer_type}" transfer with value "{amount}"'
+)
+def incoming_transfer(context, pesel, transfer_type, amount):
+    value = int(amount)
+    payload = {"amount": value, "type": transfer_type}
+    requests.post(URL + f"/api/accounts/{pesel}/transfer", json=payload)
