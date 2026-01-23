@@ -4,3 +4,4 @@ dotenv
 requests
 pytest_mock
 flask
+pymongo
