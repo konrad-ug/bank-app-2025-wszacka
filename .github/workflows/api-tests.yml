@@ -30,6 +30,11 @@ jobs:
       - name: start mongo
         run: |
           docker compose -f mongo.yml up -d
+      - name: Wait for MongoDB
+        run: |
+          # Sprawdza co 1 sekundę czy port 27017 na localhost jest otwarty
+          timeout 60s bash -c 'until nc -z localhost 27017; do echo "Czekam na Mongo..."; sleep 1; done'
+          echo "Mongo wystartowało!"
       - name: Start flask
         run: |
           export FLASK_APP=app/api.py
